@@ -8,9 +8,6 @@ import shutil
 
 base_path = os.path.abspath(os.path.dirname(__file__))
 
-# One table with RoWs as headings and excluded stuff as details
-# One table with Activities and ref. products with RoW labels as details
-
 def build_report(db_name):
     try:
         shutil.rmtree(os.path.join(base_path, "output"))
@@ -37,10 +34,3 @@ def build_report(db_name):
 
     with open(os.path.join(base_path, "output", "index.html"), "w") as f:
         f.write(template.render(rows=data, db=db_name))
-
-
-
-
-# Convert NaturalEarthData raster to base map
-# gdalwarp -s_srs 'EPSG:4326' -dstalpha -t_srs '+proj=moll +lon_0=0 +x_0=0 +y_0=0 +ellps=WGS84 +datum=WGS84 +units=m +no_defs' -ts 1000 500 GRAY_50M_SR_OB.tif base_map.tiff
-# gdal_translate -of png base_map.tiff base_map.png
