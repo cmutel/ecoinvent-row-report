@@ -13,6 +13,7 @@ setup(
         "data/assets/fonts/*.*",
         "data/assets/js/*.*",
         "data/faces/*.*",
+        "data/rows-ecoinvent.json",
         "data/image/*.*",
         "data/templates/*.*",
     ]},

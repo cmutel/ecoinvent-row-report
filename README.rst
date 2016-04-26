@@ -6,9 +6,9 @@ Tools to build an HTML report explaining what each "Rest of the World" location 
 Usage
 -----
 
-First, project the ``constructive_geometries`` topographical faces be calling ``ecoinvent_row_report.faces.project_faces_to_mollweide()``.
+First, project the ``constructive_geometries`` topographical faces be calling ``ecoinvent_row_report.project_faces_to_mollweide()``.
 
-Then create a new `Brightway2 <https://brightwaylca.org/>`__ project with each version of ecoinvent you want to include.
+Then create a new `Brightway2 <https://brightwaylca.org/>`__ project with each version of ecoinvent you want to include. Ecoinvent databases should have the string "ecoinvent" (case-insensitive) in their name.
 
 Finally, call ``ecoinvent_row_report.build_report(project_name)`` to build the RoWs report.
 
