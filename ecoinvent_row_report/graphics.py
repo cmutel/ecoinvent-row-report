@@ -34,8 +34,3 @@ def plot_row(label, exclusions):
         extent=[-18040090.191, 18040093.456, -9020045.646, 9020047.848],
     )
     plt.savefig('output-{}.png'.format(label), dpi=200)
-
-
-
-
-
