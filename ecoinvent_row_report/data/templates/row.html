@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Rest-of-World: {{ label }}</title>
+    <link rel="stylesheet" href="../assets/css/font-awesome.min.css">
+    <link rel="stylesheet" href="../assets/css/footable.standalone.min.css">
+    <script src="../assets/js/jquery-1.12.3.min.js"></script>
+    <script src="../assets/js/footable.min.js"></script>
+</head>
+<body>
+<h1>Rest-of-World location: {{ label }}</h1>
+<p><b>Excluded from this "Rest-of-World"</b>: {{ excluded }}</p>
+<img src="../assets/images/output-{{ label }}.png" alt="Graphic of RoW coverage">
+<h2>Markets</h2>
+<table class="table" data-show-toggle="false" data-sorting="true">
+    <thead>
+        <tr>
+            <th>Activity Name</th>
+            <th data-breakpoints="xs">Reference Product</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for row in rows %}
+        <tr>
+            <td>{{ row.0 }}</td>
+            <td>{{ row.1 }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<script type="text/javascript">
+jQuery(function($){
+    $('.table').footable();
+});
+</script>
+
+</body>
+</html>

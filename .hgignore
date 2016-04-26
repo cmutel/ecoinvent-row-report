@@ -13,3 +13,5 @@ dev
 .cache
 ecoinvent_row_report/data/charts
 ecoinvent_row_report/data/faces
+ecoinvent_row_report/output
+docs/notebooks/.ipynb_checkpoints
