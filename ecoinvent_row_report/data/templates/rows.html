@@ -13,6 +13,7 @@
     <thead>
         <tr>
             <th>Label</th>
+            <th>Link</th>
             <th data-breakpoints="xs">Count</th>
             <th data-breakpoints="all" data-title="Excludes">Exclusions</th>
         </tr>
@@ -21,6 +22,7 @@
         {% for row in rows %}
         <tr>
             <td>{{ row.label }}</td>
+            <td><a href="{{ row.url }}">Details</a></td>
             <td>{{ row.count }}</td>
             <td>{{ row.exclusions }}</td>
         </tr>
