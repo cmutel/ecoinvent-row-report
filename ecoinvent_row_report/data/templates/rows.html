@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Rest-of-Worlds definitions for {{ db }}</title>
+    <link rel="stylesheet" href="assets/css/font-awesome.min.css">
+    <link rel="stylesheet" href="assets/css/footable.standalone.min.css">
+    <script src="assets/js/jquery-1.12.3.min.js"></script>
+    <script src="assets/js/footable.min.js"></script>
+</head>
+<body>
+<h1>Rest-of-Worlds for {{ db }}</h1>
+<table class="table" data-show-toggle="false">
+    <thead>
+        <tr>
+            <th>Label</th>
+            <th data-breakpoints="xs">Count</th>
+            <th data-breakpoints="all" data-title="Excludes">Exclusions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for row in rows %}
+        <tr>
+            <td>{{ row.label }}</td>
+            <td>{{ row.count }}</td>
+            <td>{{ row.exclusions }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<script type="text/javascript">
+jQuery(function($){
+    $('.table').footable();
+});
+</script>
+
+</body>
+</html>
