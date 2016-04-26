@@ -26,6 +26,7 @@ setup(
         "matplotlib",
         "pandarus>=0.6",
         "pillow",
+        "pyprind",
         "shapely",
     ],
     long_description=open('README.rst').read(),

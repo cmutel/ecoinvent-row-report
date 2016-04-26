@@ -47,7 +47,7 @@ def project_faces_to_mollweide():
 
 
 def faces_for_exclusions(exclusions):
-    faces_mapping = dict(json.load(open(cg.data_fp)))
+    faces_mapping = dict(json.load(open(cg.data_fp))["data"])
     excluded = {x for label in exclusions for x in faces_mapping[label]}
     geoms = []
 
