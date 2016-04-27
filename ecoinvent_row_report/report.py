@@ -64,6 +64,7 @@ def build_report_database(db_name):
 
     data = [{
         'label': label,
+        'number': label.replace("RoW-", ""),
         'count': counter[row],
         'url': "row/" + label + '.html',
         'exclusions': ", ".join(row)

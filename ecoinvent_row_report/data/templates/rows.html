@@ -14,16 +14,16 @@
         <tr>
             <th>Label</th>
             <th data-type="html">Link</th>
-            <th data-breakpoints="xs">Count</th>
+            <th data-breakpoints="xs" data-type="numeric">Count</th>
             <th data-breakpoints="all" data-title="Excludes">Exclusions</th>
         </tr>
     </thead>
     <tbody>
         {% for row in rows %}
         <tr>
-            <td>{{ row.label }}</td>
+            <td data-sort-value="{{ row.number }}">{{ row.label }}</td>
             <td><a href="{{ row.url }}">Details</a></td>
-            <td>{{ row.count }}</td>
+            <td data-sort-value="{{ row.count }}">{{ row.count }}</td>
             <td>{{ row.exclusions }}</td>
         </tr>
         {% endfor %}
