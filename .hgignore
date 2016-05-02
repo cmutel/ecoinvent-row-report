@@ -15,3 +15,6 @@ ecoinvent_row_report/data/charts
 ecoinvent_row_report/data/faces
 ecoinvent_row_report/output
 docs/notebooks/.ipynb_checkpoints
+sync.sh
+ecoinvent_row_report/data/rows-topomapping.json
+ecoinvent_row_report/data/rows.gpkg

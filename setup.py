@@ -19,7 +19,7 @@ setup(
     ]},
     install_requires=[
         "bw2regional",
-        "constructive_geometries>=0.3",
+        "constructive_geometries>=0.3.1",
         "descartes",
         "fiona",
         "jinja2",

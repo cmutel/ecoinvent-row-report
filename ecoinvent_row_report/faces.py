@@ -47,7 +47,7 @@ def project_faces_to_mollweide():
 
 
 def faces_for_exclusions(exclusions):
-    faces_mapping = dict(json.load(open(cg.data_fp))["data"])
+    faces_mapping = dict(cg.data)
     excluded = {x for label in exclusions for x in faces_mapping[label]}
     geoms = []
 
@@ -58,3 +58,15 @@ def faces_for_exclusions(exclusions):
                     geoms.append(shape(feat['geometry']))
 
     return geoms
+
+
+def build_geopackage():
+    exclusions = dict(json.load(open(os.path.join(base_path, "data", "rows-ecoinvent.json"))))
+    fp = os.path.join(base_path, "data", "rows.gpkg")
+    cg.construct_rest_of_worlds(exclusions, fp)
+
+
+def build_topomapping():
+    exclusions = dict(json.load(open(os.path.join(base_path, "data", "rows-ecoinvent.json"))))
+    fp = os.path.join(base_path, "data", "rows-topomapping.json")
+    cg.construct_rest_of_worlds_mapping(exclusions, fp)
