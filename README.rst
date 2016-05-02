@@ -10,7 +10,7 @@ First, setup the necessary data by calling ``setup_report()``.
 
 Then create a new `Brightway2 <https://brightwaylca.org/>`__ project with each version of ecoinvent you want to include. Ecoinvent databases should have the string "ecoinvent" (case-insensitive) in their name.
 
-Finally, call ``ecoinvent_row_report.build_report("project name")`` to build the RoWs report.
+Finally, call ``build_report("project name")`` to build the RoWs report.
 
 Alternatively, call ``build_report_database("database name")`` to generate a RoWs report for a specific database.
 
