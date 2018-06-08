@@ -1,22 +1,30 @@
 # -*- coding: utf-8 -*-
+
+# from .report import build_report, build_report_database
 import os
+import appdirs
 
 __all__ = (
-    "build_report",
-    "build_report_database",
-    "build_geopackage",
-    "build_topomapping",
-    "setup_report",
+    "RoWGrapher",
+    "Report",
 )
+__version__ = (0, 2)
 
-base_path = os.path.abspath(os.path.dirname(__file__))
+DEFAULT_MAPPING = { # Database name: Display name
+    '3.3 apos': 'ecoinvent 3.3 APOS',
+    '3.3 consequential': 'ecoinvent 3.3 consequential',
+    '3.3 cutoff': 'ecoinvent 3.3 cutoff',
+    '3.4 apos': 'ecoinvent 3.4 APOS',
+    '3.4 consequential': 'ecoinvent 3.4 consequential',
+    '3.4 cutoff': 'ecoinvent 3.4 cutoff',
+}
 
-from .report import build_report, build_report_database
-from .faces import project_faces_to_mollweide, build_geopackage, build_topomapping
-from .graphics import plot_all_rows
+DATADIR = os.path.join(os.path.abspath(os.path.dirname(__file__)), "data")
+CACHEDIR = os.path.abspath(appdirs.user_data_dir("row-report", "row-reporter"))
 
-def setup_report():
-    print("Projecting")
-    project_faces_to_mollweide()
-    print("Plotting all RoW charts")
-    plot_all_rows()
+from constructive_geometries import ConstructiveGeometries
+cg = ConstructiveGeometries()
+cg.load_definitions()
+
+from .graphics import RoWGrapher
+from .report import Report

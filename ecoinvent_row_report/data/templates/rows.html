@@ -1,21 +1,29 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Rest-of-Worlds definitions for {{ db }}</title>
+    <title>Rest-of-Worlds definitions report</title>
     <link rel="stylesheet" href="assets/css/font-awesome.min.css">
     <link rel="stylesheet" href="assets/css/footable.standalone.min.css">
     <script src="assets/js/jquery-1.12.3.min.js"></script>
     <script src="assets/js/footable.min.js"></script>
 </head>
 <body>
-<h1>Rest-of-Worlds for {{ db }}</h1>
+<h1>Rest-of-Worlds report</h1>
+<p><a href="https://github.com/PascalLesage/RoWer">Rower</a> version: {{rower_version}}</p>
+<p><a href="https://github.com/cmutel/constructive_geometries">constructive_geometries</a> version: {{cg_version}}</p>
+<p>Ecoinvent versions considered:</p>
+<ul>
+    {% for ei in ecoinvents %}
+    <li>{{ ei }}</li>
+    {% endfor %}
+</ul>
 <table class="table" data-show-toggle="false" data-sorting="true">
     <thead>
         <tr>
             <th>Label</th>
             <th data-type="html">Link</th>
-            <th data-breakpoints="xs" data-type="numeric">Count</th>
-            <th data-breakpoints="all" data-title="Excludes">Exclusions</th>
+            <th data-breakpoints="xs" data-type="numeric">Usage count</th>
+            <th>Exclusions</th>
         </tr>
     </thead>
     <tbody>

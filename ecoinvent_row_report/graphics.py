@@ -1,15 +1,19 @@
-from . import base_path
-from .faces import faces_for_exclusions
+from . import DATADIR, cg
+from .faces import projected_fp, project_faces_to_mollweide
 from descartes import PolygonPatch
 from PIL import Image
+from shapely.geometry import shape
 from shapely.geometry.multipolygon import MultiPolygon
+import fiona
 import json
 import matplotlib.pyplot as plt
 import os
 import pyprind
 import shutil
 
+
 BLUE = '#6699cc'
+IMAGE_PATH = os.path.join(DATADIR, "image", "base_map.png")
 
 
 def add_geom(geom, axis):
@@ -22,34 +26,39 @@ def add_geom(geom, axis):
         axis.add_patch(patch)
 
 
-def plot_row(label, exclusions):
-    if not os.path.exists(os.path.join(base_path, "data", "charts")):
-        os.mkdir(os.path.join(base_path, "data", "charts"))
+class RoWGrapher:
+    def __init__(self):
+        self.load_faces()
+        project_faces_to_mollweide()
 
-    fig = plt.figure(figsize=(5, 2.5))
-    ax = plt.axes([0,0,1,1], frameon=False)
-    ax.set_axis_off()
+    def load_faces(self):
+        self.faces = {}
 
-    for geom in faces_for_exclusions(exclusions):
-        add_geom(geom, ax)
+        with fiona.drivers():
+            with fiona.open(projected_fp) as src:
+                for feat in src:
+                    self.faces[feat['properties']['id']] = shape(feat['geometry'])
 
-    image = Image.open(os.path.join(base_path, "data", "image", "base_map.png"))
-    plt.imshow(
-        image,
-        zorder=0,
-        extent=[-18040090.191, 18040093.456, -9020045.646, 9020047.848],
-    )
-    fp = os.path.join(base_path, "data", "charts", 'output-{}.png'.format(label))
-    plt.savefig(fp, dpi=200)
-    plt.close()
+    def plot_row(self, exclusions, filepath):
+        fig = plt.figure(figsize=(5, 2.5))
+        ax = plt.axes([0,0,1,1], frameon=False)
+        ax.set_axis_off()
 
+        excluded = set()
 
-def plot_all_rows():
-    if os.path.exists(os.path.join(base_path, "data", "charts")):
-        shutil.rmtree(os.path.join(base_path, "data", "charts"))
-    os.mkdir(os.path.join(base_path, "data", "charts"))
+        for region in exclusions:
+            for face_id in cg.data[region]:
+                excluded.add(face_id)
 
-    row_data = json.load(open(os.path.join(base_path, "data", "rows-ecoinvent.json")))
+        for face_id in self.faces:
+            if face_id not in excluded:
+                add_geom(self.faces[face_id], ax)
 
-    for label, exclusions in pyprind.prog_bar(row_data, monitor=False):
-        plot_row(label, exclusions)
+        image = Image.open(IMAGE_PATH)
+        plt.imshow(
+            image,
+            zorder=0,
+            extent=[-18040090.191, 18040093.456, -9020045.646, 9020047.848],
+        )
+        plt.savefig(filepath, dpi=200)
+        plt.close()

@@ -2,32 +2,38 @@
 <html>
 <head>
     <title>Rest-of-World: {{ label }}</title>
-    <link rel="stylesheet" href="../assets/css/font-awesome.min.css">
-    <link rel="stylesheet" href="../assets/css/footable.standalone.min.css">
-    <script src="../assets/js/jquery-1.12.3.min.js"></script>
-    <script src="../assets/js/footable.min.js"></script>
+    <link rel="stylesheet" href="assets/css/font-awesome.min.css">
+    <link rel="stylesheet" href="assets/css/footable.standalone.min.css">
+    <script src="assets/js/jquery-1.12.3.min.js"></script>
+    <script src="assets/js/footable.min.js"></script>
 </head>
 <body>
-<h1>Rest-of-World location: {{ label }}</h1>
+<h1>Rest-of-World location: {{ label }} | <a href="index.html">RoWs report</a></h1>
+<p><a href="https://github.com/PascalLesage/RoWer">Rower</a> version: {{rower_version}}</p>
+<p><a href="https://github.com/cmutel/constructive_geometries">constructive_geometries</a> version: {{cg_version}}</p>
 <p><b>Excluded from this "Rest-of-World"</b>: {{ excluded }}</p>
-<img src="../assets/images/output-{{ label }}.png" alt="Graphic of RoW coverage">
-<h2>Markets</h2>
+<img src="output-{{ label }}.png" alt="Graphic of RoW coverage">
+{% for db in databases %}
+<h2>{{ db.label }}</h2>
 <table class="table" data-show-toggle="false" data-sorting="true">
     <thead>
         <tr>
             <th>Activity Name</th>
             <th data-breakpoints="xs">Reference Product</th>
+            <th>Unit</th>
         </tr>
     </thead>
     <tbody>
-        {% for row in rows %}
+        {% for act in db.activities %}
         <tr>
-            <td>{{ row.0 }}</td>
-            <td>{{ row.1 }}</td>
+            <td>{{ act.0 }}</td>
+            <td>{{ act.1 }}</td>
+            <td>{{ act.2 }}</td>
         </tr>
         {% endfor %}
     </tbody>
 </table>
+{% endfor %}
 
 <script type="text/javascript">
 jQuery(function($){

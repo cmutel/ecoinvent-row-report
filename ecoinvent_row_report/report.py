@@ -1,85 +1,115 @@
-from . import base_path
-from bw2regional.ecoinvent import discretize_rest_of_world
+from . import DEFAULT_MAPPING, DATADIR
+from .graphics import RoWGrapher
+from bw2data import databases, Database
 import collections
 import jinja2
 import json
 import os
 import pyprind
 import shutil
-
-# Rest of Worlds
-
-# - Table of Rows
-# - Link to each RoW detail page
-# - Expand: See all geos excluded
-# - Link to other ecoinvent versions/all
-# - Count of numbers of times used
-
-def prepare_output_dir():
-    try:
-        shutil.rmtree(os.path.join(base_path, "output"))
-    except:
-        pass
-    os.mkdir(os.path.join(base_path, "output"))
-    os.mkdir(os.path.join(base_path, "output", "row"))
-    shutil.copytree(
-        os.path.join(base_path, "data", "assets"),
-        os.path.join(base_path, "output", "assets")
-    )
-    shutil.copytree(
-        os.path.join(base_path, "data", "charts"),
-        os.path.join(base_path, "output", "assets", "images")
-    )
+import rower
+import constructive_geometries
 
 
-def build_report():
-    # TODO - for entire project
-    pass
+class Report:
+    def __init__(self, dirpath, mapping=DEFAULT_MAPPING, overwrite=False):
+        if os.path.exists(dirpath) and not overwrite:
+            raise OSError("Directory already exists")
+        self.dirpath = dirpath
+        self.mapping = mapping
+        self.grapher = RoWGrapher()
+        self.rows = self.load_rows()
+        self.ecoinvents = {
+            db: rower.RowerDatapackage(
+                os.path.join(rower.DATAPATH, label)
+            ).read_data()
+            for db, label in self.mapping.items()
+        }
 
+    def make_report(self):
+        self.prepare_output_dir()
+        self.load_databases()
+        self.get_global_counts()
+        self.make_rows_index()
+        print("Creating individual RoW reports")
+        for label, exclusions in pyprind.prog_bar(self.rows.items()):
+            self.make_row(label, exclusions)
 
-def build_report_database(db_name):
-    prepare_output_dir()
+    def prepare_output_dir(self):
+        if os.path.exists(self.dirpath):
+            shutil.rmtree(os.path.join(self.dirpath))
 
-    standard_definitions = {frozenset(v): k for k, v in json.load(open(os.path.join(base_path, "data", "rows-ecoinvent.json")))}
+        os.makedirs(self.dirpath)
+        shutil.copytree(
+            os.path.join(DATADIR, "assets"),
+            os.path.join(self.dirpath, "assets")
+        )
 
-    activity_dict, row_locations, locations, exceptions = discretize_rest_of_world(db_name, warn=False)
-    row_locations = {
-        tuple(sorted(k)): standard_definitions[frozenset(k)]
-        for k in dict(row_locations)
-        if k
-    }
-    rl = dict(row_locations)
+    def load_rows(self):
+        obj = rower.RowerDatapackage(
+            os.path.join(rower.DATAPATH, "ecoinvent generic")
+        )
+        return obj.read_data()["Rest-of-World definitions"]
 
-    counter = collections.defaultdict(int)
-    for location in locations.values():
-        if not location:
-            continue
-        counter[location] += 1
+    def load_databases(self):
+        ds = lambda x: (x['name'], x['reference product'], x['unit'])
 
-    reverse_locations = {}
-    for k, v in locations.items():
-        if not v:
-            continue
-        reverse_locations[rl[v]] = reverse_locations.get(rl[v], []) + [k]
+        self.databases = {}
+        for db in self.mapping:
+            if db in databases:
+                print("Loading:", db)
+                self.databases[db] = {
+                    act['code']: ds(act) for act in Database(db)
+                }
 
-    data = [{
-        'label': label,
-        'number': label.replace("RoW-", ""),
-        'count': counter[row],
-        'url': "row/" + label + '.html',
-        'exclusions': ", ".join(row)
-    } for row, label in row_locations.items()]
+    def get_global_counts(self):
+        self.counts = collections.defaultdict(int)
+        for obj in self.ecoinvents.values():
+            for label, lst in obj["Activity mapping"].items():
+                self.counts[label] += len(lst)
 
-    template = jinja2.Template(open(os.path.join(base_path, "data", "templates", "rows.html")).read())
-    with open(os.path.join(base_path, "output", "index.html"), "w") as f:
-        f.write(template.render(rows=data, db=db_name))
+    def make_rows_index(self):
+        shorten = lambda x: x[:60] + "..." if len(x) > 60 else x
 
-    template = jinja2.Template(open(os.path.join(base_path, "data", "templates", "row.html")).read())
+        data = {
+            'cg_version': constructive_geometries.__version__,
+            'rower_version': rower.__version__,
+            'ecoinvents': self.mapping.values(),
+            'rows': [{
+                'number': int(label.replace("RoW_", "")),
+                'url': label + '.html',
+                'label': label,
+                'count': self.counts[label],
+                'exclusions': shorten("|".join(lst))
+            } for label, lst in self.rows.items()]
+        }
 
-    for row, label in pyprind.prog_bar(row_locations.items()):
-        with open(os.path.join(base_path, "output", "row", label + ".html"), "w") as f:
-            f.write(template.render(
-                label=label,
-                rows=reverse_locations[label],
-                excluded=", ".join(row)
-            ))
+        template = jinja2.Template(open(os.path.join(DATADIR, "templates", "rows.html")).read())
+        with open(os.path.join(self.dirpath, "index.html"), "w") as f:
+            f.write(template.render(**data))
+
+    def make_row(self, label, exclusions):
+        self.grapher.plot_row(
+            exclusions,
+            os.path.join(self.dirpath, "output-{}.png".format(label))
+        )
+
+        databases = [{
+            'label': self.mapping[key],
+            'activities': [
+                self.databases[key][code]
+                for code in dct["Activity mapping"].get(label, [])
+            ]
+        } for key, dct in self.ecoinvents.items()]
+
+        data = {
+            'cg_version': constructive_geometries.__version__,
+            'rower_version': rower.__version__,
+            'label': label,
+            'excluded': ', '.join(exclusions),
+            'databases': [x for x in databases if x['activities']]
+        }
+
+        template = jinja2.Template(open(os.path.join(DATADIR, "templates", "row.html")).read())
+        with open(os.path.join(self.dirpath, "{}.html".format(label)), "w") as f:
+            f.write(template.render(**data))
