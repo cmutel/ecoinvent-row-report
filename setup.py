@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='ecoinvent_row_report',
-    version="0.2",
+    version="0.2.1",
     packages=["ecoinvent_row_report"],
     author="Chris Mutel",
     author_email="cmutel@gmail.com",
@@ -15,7 +15,6 @@ setup(
     ]},
     install_requires=[
         "bw2data",
-        "bw2regional",
         "constructive_geometries>=0.6.4",
         "descartes",
         "fiona",
@@ -24,6 +23,7 @@ setup(
         "pandarus>=0.6",
         "pillow",
         "pyprind",
+        "rower>=0.2",
         "shapely",
     ],
     long_description=open('README.rst').read(),

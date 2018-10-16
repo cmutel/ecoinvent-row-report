@@ -8,7 +8,7 @@ __all__ = (
     "RoWGrapher",
     "Report",
 )
-__version__ = (0, 2)
+__version__ = (0, 2, 1)
 
 DEFAULT_MAPPING = { # Database name: Display name
     '3.3 apos': 'ecoinvent 3.3 APOS',
@@ -17,6 +17,9 @@ DEFAULT_MAPPING = { # Database name: Display name
     '3.4 apos': 'ecoinvent 3.4 APOS',
     '3.4 consequential': 'ecoinvent 3.4 consequential',
     '3.4 cutoff': 'ecoinvent 3.4 cutoff',
+    '3.5 apos': 'ecoinvent 3.5 APOS',
+    '3.5 consequential': 'ecoinvent 3.5 consequential',
+    '3.5 cutoff': 'ecoinvent 3.5 cutoff',
 }
 
 DATADIR = os.path.join(os.path.abspath(os.path.dirname(__file__)), "data")

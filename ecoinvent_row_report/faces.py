@@ -23,6 +23,7 @@ def to_mp(geom):
 
 
 def project_faces_to_mollweide():
+    print("Projecting topological faces to Mollweide projection")
     if os.path.exists(projected_fp):
         return
 

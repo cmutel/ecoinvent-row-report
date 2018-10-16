@@ -3,21 +3,21 @@ Ecoinvent RoW Report
 
 Tools to build an HTML report explaining what each "Rest of the World" location used in ecoinvent 3 means.
 
-Report generation
------------------
+Usage
+-----
 
-First, setup the necessary data by calling ``setup_report()``.
+import ecoinvent_row_report as e
+from brightway2 import projects
+projects.set_current("RoW generation")  # Project with all ecoinvents
+r = e.Report("Absolute filepath to output directory to be created")
+r.make_report()
 
-Then create a new `Brightway2 <https://brightwaylca.org/>`__ project with each version of ecoinvent you want to include. Ecoinvent databases should have the string "ecoinvent" (case-insensitive) in their name.
+Upload to geography.ecoinvent.org server
+----------------------------------------
 
-Finally, call ``build_report("project name")`` to build the RoWs report.
-
-Alternatively, call ``build_report_database("database name")`` to generate a RoWs report for a specific database.
-
-Rest of World topologies
-------------------------
-
-The functions ``build_geopackage()`` and ``build_topomapping()`` can be used to generate the data needed for `Brightway2-regional <https://bitbucket.org/cmutel/brightway2-regional>`__ geo- and topocollections.
+cd output_directory
+rsync -zv *.* 129.132.117.28:websites/geography.ecoinvent.org/rows/
+rsync -rzv assets 129.132.117.28:websites/geography.ecoinvent.org/rows/assets
 
 Base world map
 --------------

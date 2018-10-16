@@ -28,8 +28,10 @@ def add_geom(geom, axis):
 
 class RoWGrapher:
     def __init__(self):
+        if not os.path.exists(projected_fp):
+            project_faces_to_mollweide()
+
         self.load_faces()
-        project_faces_to_mollweide()
 
     def load_faces(self):
         self.faces = {}
